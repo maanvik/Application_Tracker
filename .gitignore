@@ -1,0 +1,37 @@
+# Ignore environment variables and sensitive config files
+.env
+config.py
+
+# Ignore compiled Python files
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore virtual environments
+venv/
+.env/
+
+# Ignore database files
+*.sqlite3
+*.db
+
+# Ignore migration files (optional)
+migrations/
+
+# Ignore Node modules (for frontend)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Ignore build artifacts
+dist/
+build/
+.DS_Store
+
+# Ignore logs and temporary files
+*.log
+tmp/
+*.swp
+
+.vs/
+*/.vs"
