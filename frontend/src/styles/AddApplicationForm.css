@@ -1,0 +1,48 @@
+.block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+    .block h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .block form {
+        width: 100%;
+    }
+
+        .block form div {
+            margin-bottom: 1rem;
+        }
+
+        .block form label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .block form input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .block form button {
+            width: 100%;
+            padding: 0.5rem;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            .block form button:hover {
+                background-color: #2563eb;
+            }

@@ -1,0 +1,74 @@
+.dashboard {
+    min-height: 100vh;
+    background-color: #f3f4f6;
+
+}
+
+.dashboard .content-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: 1.5fr; 
+    width:100%;
+}
+
+.navbar {
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-container {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.navbar-content {
+    display: flex;
+    justify-content: space-between;
+    height: 4rem;
+}
+
+.navbar-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #111827;
+}
+
+.logout-button {
+    margin: 1rem auto;
+    padding: 0.5rem 1rem;
+    background-color: #ef4444;
+    color: white;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+    .logout-button:hover {
+        background-color: #dc2626;
+    }
+
+.dashboard-content {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.ApplicationForm {
+    display:flex;
+    justify-content:center;
+    align-content:center;
+
+}
+
+.content-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.content-card {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    width:100%;
+}
