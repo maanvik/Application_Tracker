@@ -76,6 +76,34 @@ def logout():
     logout_user()
     return jsonify({'message': 'Logged out successfully'}), 200
 
+@main.route('/api/user', methods=['GET', 'PUT'])
+@login_required
+def handle_user():
+    if request.method == 'GET':
+        return jsonify({
+            'id': current_user.id,
+            'username': current_user.username,
+            'email': current_user.email
+        }), 200
+
+    elif request.method == 'PUT':
+        data = request.get_json()
+        new_username = data.get('username')
+
+        if not new_username:
+            return jsonify({'message': 'Username is required'}), 400
+
+        existing_user = User.query.filter_by(username=new_username).first()
+        if existing_user and existing_user.id != current_user.id:
+            return jsonify({'message': 'Username already taken'}), 400
+
+        current_user.username = new_username
+        db.session.commit()
+
+        return jsonify({'message': 'Username updated successfully'}), 200
+
+
+
 @main.route('/api/applications/stats')
 @login_required
 def application_stats():

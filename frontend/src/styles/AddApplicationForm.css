@@ -1,48 +1,51 @@
-.block {
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    width: 100%;
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 20px;
+    z-index: 1000;
 }
 
-    .block h2 {
-        text-align: center;
-        margin-bottom: 20px;
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+    .modal-content form div {
+        margin-bottom: 1rem;
     }
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    font-size: 24px;
+    background-color: red;
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
 
-    .block form {
-        width: 100%;
-    }
-
-        .block form div {
-            margin-bottom: 1rem;
-        }
-
-        .block form label {
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-
-        .block form input {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        .block form button {
-            width: 100%;
-            padding: 0.5rem;
-            background-color: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-            .block form button:hover {
-                background-color: #2563eb;
-            }
+.modal-content form button[type="submit"] {
+    width: 100%;
+    padding: 10px 16px;
+    background-color: #0066cc; 
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+    

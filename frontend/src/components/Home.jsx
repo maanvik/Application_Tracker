@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 import Header from './Header';
 import '../styles/Home.css';
@@ -13,8 +13,19 @@ function Home() {
                         Job Application Tracker
                     </h1>
                     <p className="home-description">
-                        Track and manage your job applications in one place
+                        Track and manage your job applications in one place. Stay organized and never miss an opportunity.
                     </p>
+                    <div className="features-list">
+                        <div className="feature-item">
+                            <span className="feature-icon">📊</span>
+                            <p>Track application status</p>
+                        </div>
+                        
+                        <div className="feature-item">
+                            <span className="feature-icon">📈</span>
+                            <p>View analytics</p>
+                        </div>
+                    </div>
                     <div className="button-container">
                         <Link to="/login" className="login-button">
                             Login
@@ -29,4 +40,4 @@ function Home() {
     );
 }
 
-export default Home;
+export default Home
