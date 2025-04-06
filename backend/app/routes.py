@@ -1,11 +1,12 @@
 from flask import Blueprint, jsonify, request
 from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import desc
+from sqlalchemy import desc, text
+import logging
 from . import db
 from .models import User, JobApplication
-from .forms import RegistrationForm, LoginForm, JobApplicationForm
 
+logger = logging.getLogger(__name__)
 main = Blueprint('main', __name__)
 
 @main.route('/')
@@ -17,18 +18,15 @@ def register():
     try:
         data = request.json
         
-        # Validate input data
         if not all(key in data for key in ['username', 'email', 'password']):
             return jsonify({'message': 'Missing required fields'}), 400
 
-        # Check if user already exists
         if User.query.filter_by(email=data['email']).first():
             return jsonify({'message': 'Email already registered'}), 400
         
         if User.query.filter_by(username=data['username']).first():
             return jsonify({'message': 'Username already taken'}), 400
         
-        # Create new user
         user = User(
             username=data['username'],
             email=data['email'],
@@ -41,6 +39,7 @@ def register():
         return jsonify({'message': 'User registered successfully'}), 201
     
     except Exception as e:
+        logger.error(f"Registration error: {str(e)}")
         db.session.rollback()
         return jsonify({'message': f'Registration failed: {str(e)}'}), 500
 
@@ -68,6 +67,7 @@ def login():
         return jsonify({'message': 'Invalid credentials'}), 401
     
     except Exception as e:
+        logger.error(f"Login error: {str(e)}")
         return jsonify({'message': f'Login failed: {str(e)}'}), 500
 
 @main.route('/api/logout')
@@ -76,6 +76,7 @@ def logout():
     logout_user()
     return jsonify({'message': 'Logged out successfully'}), 200
 
+
 @main.route('/api/user', methods=['GET', 'PUT'])
 @login_required
 def handle_user():
@@ -83,8 +84,9 @@ def handle_user():
         return jsonify({
             'id': current_user.id,
             'username': current_user.username,
-            'email': current_user.email
-        }), 200
+            'email': current_user.email,
+            'created_at': current_user.created_at.isoformat()
+        })
 
     elif request.method == 'PUT':
         data = request.get_json()
@@ -93,84 +95,63 @@ def handle_user():
         if not new_username:
             return jsonify({'message': 'Username is required'}), 400
 
-        existing_user = User.query.filter_by(username=new_username).first()
-        if existing_user and existing_user.id != current_user.id:
-            return jsonify({'message': 'Username already taken'}), 400
+        # Check if the new username already exists (and is not the current user)
+        existing = User.query.filter_by(username=new_username).first()
+        if existing and existing.id != current_user.id:
+            return jsonify({'message': 'Username already taken'}), 409
 
         current_user.username = new_username
         db.session.commit()
-
-        return jsonify({'message': 'Username updated successfully'}), 200
+        return jsonify({'message': 'Username updated successfully'})
 
 
 
 @main.route('/api/applications/stats')
 @login_required
 def application_stats():
-    # Get all applications for the current user without pagination
-    applications = JobApplication.query.filter_by(user_id=current_user.id).all()
-    
-    applications_list = [{
-        'id': app.id,
-        'company_name': app.company_name,
-        'position': app.position,
-        'status': app.status,
-        'job_url': app.job_url,
-        'date_applied': app.date_applied.isoformat()
-    } for app in applications]
-    
-    return jsonify({'applications': applications_list}), 200
+    try:
+        applications = JobApplication.query.filter_by(user_id=current_user.id).all()
+        return jsonify({
+            'applications': [app.to_dict() for app in applications]
+        }), 200
+    except Exception as e:
+        logger.error(f"Error fetching application stats: {str(e)}")
+        return jsonify({'message': f'Failed to fetch stats: {str(e)}'}), 500
 
 @main.route('/api/applications', methods=['GET', 'POST'])
 @login_required
 def applications():
     if request.method == 'POST':
-        data = request.json
-        application = JobApplication(
-            company_name=data['company_name'],
-            position=data['position'],
-            job_url=data['job_url'],
-            user_id=current_user.id
-        )
-        db.session.add(application)
-        db.session.commit()
-        return jsonify({'message': 'Application added successfully'}), 201
-    
+        try:
+            data = request.json
+            logger.info(f"Received application data: {data}")
+            
+            application = JobApplication(
+                company_name=data['company_name'],
+                position=data['position'],
+                job_url=data.get('job_url'),
+                user_id=current_user.id
+            )
+            
+            db.session.add(application)
+            db.session.commit()
+            logger.info(f"Successfully saved application with id: {application.id}")
+            
+            return jsonify(application.to_dict()), 201
+        except Exception as e:
+            logger.error(f"Error adding application: {str(e)}")
+            db.session.rollback()
+            return jsonify({'message': f'Failed to add application: {str(e)}'}), 500
+
     # GET request
-    page = request.args.get('page', 1, type=int)
-    per_page = request.args.get('per_page', 10, type=int)
-    sort_by = request.args.get('sort_by', 'date_applied')
-    sort_order = request.args.get('sort_order', 'desc')
-    filter_by = request.args.get('filter_by')
-    filter_value = request.args.get('filter_value')
-
-    query = JobApplication.query.filter_by(user_id=current_user.id)
-
-    if filter_by and filter_value:
-        query = query.filter(getattr(JobApplication, filter_by).ilike(f'%{filter_value}%'))
-
-    if sort_order == 'desc':
-        query = query.order_by(desc(getattr(JobApplication, sort_by)))
-    else:
-        query = query.order_by(getattr(JobApplication, sort_by))
-
-    paginated_apps = query.paginate(page=page, per_page=per_page, error_out=False)
-    
-    applications = [{
-        'id': app.id,
-        'company_name': app.company_name,
-        'position': app.position,
-        'status': app.status,
-        'job_url': app.job_url,
-        'date_applied': app.date_applied.isoformat()
-    } for app in paginated_apps.items]
-
-    return jsonify({
-        'applications': applications,
-        'total_pages': paginated_apps.pages,
-        'current_page': paginated_apps.page,
-        'total_items': paginated_apps.total
-    }), 200
+    try:
+        applications = JobApplication.query.filter_by(user_id=current_user.id).all()
+        return jsonify({
+            'applications': [app.to_dict() for app in applications]
+        }), 200
+    except Exception as e:
+        logger.error(f"Error fetching applications: {str(e)}")
+        return jsonify({'message': f'Failed to fetch applications: {str(e)}'}), 500
 
 @main.route('/api/applications/<int:id>', methods=['PUT', 'DELETE'])
 @login_required
@@ -193,8 +174,9 @@ def manage_application(id):
                 application.job_url = data['job_url']
             
             db.session.commit()
-            return jsonify({'message': 'Application updated successfully'}), 200
+            return jsonify(application.to_dict()), 200
         except Exception as e:
+            logger.error(f"Error updating application: {str(e)}")
             db.session.rollback()
             return jsonify({'message': f'Update failed: {str(e)}'}), 500
 
@@ -204,5 +186,15 @@ def manage_application(id):
             db.session.commit()
             return jsonify({'message': 'Application deleted successfully'}), 200
         except Exception as e:
+            logger.error(f"Error deleting application: {str(e)}")
             db.session.rollback()
             return jsonify({'message': f'Delete failed: {str(e)}'}), 500
+
+@main.route('/api/test-db', methods=['GET'])
+def test_db():
+    try:
+        db.session.execute(text('SELECT 1'))
+        return jsonify({'message': 'Database connection successful'}), 200
+    except Exception as e:
+        logger.error(f"Database connection test failed: {str(e)}")
+        return jsonify({'message': f'Database connection failed: {str(e)}'}), 500

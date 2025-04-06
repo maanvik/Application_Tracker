@@ -6,6 +6,7 @@ config.py
 __pycache__/
 *.pyc
 *.pyo
+instance/
 
 # Ignore virtual environments
 venv/
