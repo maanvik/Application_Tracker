@@ -1,6 +1,6 @@
 ﻿# Job Application Tracker
 
-A modern, full-stack web application for tracking and managing job applications throughout your job search process. Built with React, Flask, and PostgreSQL.
+A modern, full-stack web application for tracking and managing job applications throughout your job search process. 
 
 
 
