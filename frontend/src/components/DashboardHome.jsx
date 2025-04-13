@@ -89,7 +89,7 @@ function DashboardHome() {
                      <ApplicationTable
                           applications={recentApplications}
                           onApplicationUpdated={handleApplicationAdded}
-                          simplified={false}
+                          simplified={true}
                       />
 
                 )}

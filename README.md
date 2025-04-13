@@ -2,7 +2,10 @@
 
 A modern, full-stack web application for tracking and managing job applications throughout your job search process. Built with React, Flask, and PostgreSQL.
 
+## Demo
+Here is the Demo of how application works
 
+![Walkthrough](./public/Walkthrough.gif)
 
 ## Features
 

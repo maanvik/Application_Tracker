@@ -51,6 +51,7 @@ function Login() {
                                 placeholder="Email"
                                 value={formData.email}
                                 onChange={handleChange}
+                                autoComplete="off"
                                 required
                             />
                         </div>

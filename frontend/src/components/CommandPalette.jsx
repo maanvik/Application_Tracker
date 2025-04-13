@@ -11,7 +11,7 @@ function CommandPalette({ isOpen, onClose }) {
     const commands = [
         { id: 'add-application', name: 'Add New Application', action: () => navigate('/dashboard/add') },
         { id: 'view-applications', name: 'View Applications', action: () => navigate('/dashboard/applications') },
-        { id: 'profile', name: 'View Profile', action: () => navigate('/profile') },
+        { id: 'profile', name: 'View Profile', action: () => navigate('/dashboard/profile') },
         {
             id: 'logout',
             name: 'Logout',

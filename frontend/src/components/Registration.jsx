@@ -75,6 +75,7 @@ function Registration() {
                                 onChange={handleChange}
                                 required
                                 className="form-input"
+                                autoComplete="off"
                             />
                         </div>
                         <div className="form-group">
@@ -87,6 +88,7 @@ function Registration() {
                                 onChange={handleChange}
                                 required
                                 className="form-input"
+                                autoComplete="off"
                             />
                         </div>
                         <div className="form-group">

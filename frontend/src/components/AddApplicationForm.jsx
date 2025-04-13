@@ -40,6 +40,7 @@ function AddApplicationForm({ onClose, onApplicationAdded }) {
                             name="company_name"
                             value={formData.company_name}
                             onChange={handleChange}
+                            autoComplete="off"
                             required
                         />
                     </div>
@@ -51,6 +52,7 @@ function AddApplicationForm({ onClose, onApplicationAdded }) {
                             name="position"
                             value={formData.position}
                             onChange={handleChange}
+                            autoComplete="off"
                             required
                         />
                     </div>
@@ -62,6 +64,7 @@ function AddApplicationForm({ onClose, onApplicationAdded }) {
                             name="job_url"
                             value={formData.job_url}
                             onChange={handleChange}
+                            autoComplete="off"
                         />
                     </div>
                     <button type="submit" >Add Application</button>
